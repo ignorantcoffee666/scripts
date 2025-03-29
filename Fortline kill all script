@@ -1,0 +1,47 @@
+--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+local Settings = { gun = "Sniper" }
+local player = game.Players.LocalPlayer
+
+if not player.Character or not player.Character:FindFirstChild("Humanoid") then
+    player.CharacterAdded:Wait()
+end
+
+if not player.Character:FindFirstChild(Settings.gun) then
+    local tool = player.Backpack:FindFirstChild(Settings.gun)
+    if tool then
+        player.Character.Humanoid:EquipTool(tool)
+    end
+end
+
+for _, target in pairs(game.Players:GetPlayers()) do
+    if target.Name ~= player.Name then
+        local targetCharacter = target.Character
+        if targetCharacter then
+            local head = targetCharacter:FindFirstChild("Head")
+            local humanoid = targetCharacter:FindFirstChild("Humanoid")
+            
+            if head and humanoid then
+                local weapon = player.Character:FindFirstChild(Settings.gun)
+                if weapon then
+                    game:GetService("ReplicatedStorage").WeaponsSystem.Network.WeaponHit:FireServer(
+                        weapon,
+                        {
+                            p = head.Position,
+                            pid = 1,
+                            part = head,
+                            d = 500,
+                            maxDist = 500,
+                            h = humanoid,
+                            m = Enum.Material.Plastic,
+                            n = Vector3.new(0, 0, 0),
+                            t = 0,
+                            sid = 32
+                        }
+                    )
+                end
+            end
+        end
+    end
+end
